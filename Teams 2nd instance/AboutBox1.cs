@@ -102,7 +102,7 @@ namespace Teams_2nd_instance
         }
         #endregion
 
-        private void okButton_Click(object sender, EventArgs e)
+        private void OkButton_Click(object sender, EventArgs e)
         {
             AboutBox1.ActiveForm.Close();
         }

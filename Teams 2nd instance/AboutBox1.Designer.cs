@@ -100,7 +100,7 @@
             this.labelVersion.Name = "labelVersion";
             this.labelVersion.Size = new System.Drawing.Size(406, 26);
             this.labelVersion.TabIndex = 0;
-            this.labelVersion.Text = "Version 0.2";
+            this.labelVersion.Text = "Version 0.4";
             this.labelVersion.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // labelCopyright
@@ -149,7 +149,7 @@
             this.okButton.Size = new System.Drawing.Size(112, 34);
             this.okButton.TabIndex = 24;
             this.okButton.Text = "&OK";
-            this.okButton.Click += new System.EventHandler(this.okButton_Click);
+            this.okButton.Click += new System.EventHandler(this.OkButton_Click);
             // 
             // AboutBox1
             // 

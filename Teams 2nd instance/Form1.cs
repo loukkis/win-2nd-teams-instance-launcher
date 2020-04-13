@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -17,13 +18,16 @@ namespace Teams_2nd_instance
         private System.Windows.Forms.MenuItem menuItem1;
         private System.Windows.Forms.MenuItem menuItem2;
 
-        public Form1()
+        public Form1(string parameter)
         {
             //Initialize and create environment variables
             InitializeComponent();
             Environment.SetEnvironmentVariable("OLDPROFILE", Environment.GetEnvironmentVariable("USERPROFILE"));
             Environment.SetEnvironmentVariable("USERPROFILE", Environment.GetEnvironmentVariable("OLDPROFILE") + "\\appdata\\local\\microsoft\\teams\\");
 
+            
+                //InitializeComponent();
+                MinimizeApp(parameter);
             
 
             this.components = new System.ComponentModel.Container();
@@ -49,15 +53,40 @@ namespace Teams_2nd_instance
 
             notifyIcon1.ContextMenu = this.contextMenu1;
 
+            //Get registry "startup" settings in application launch
+            try
+            {
+                using (RegistryKey key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run\\"))
+                {
+                    if (key != null)
+                    {
+
+                        Object o = key.GetValue("Teams Launcher");
+                        if (o != null)
+                        {
+                            checkBox1.Checked = true;
+                        }
+                        else
+                        {
+                            checkBox1.Checked = false;
+                        }
+                    }
+                }
+            }
+            catch (Exception) 
+            {
+                
+            }
+
 
         }
+
 
         //Launch second Teams instance with new virtual profile location
         private void launch_2nd()
         {
             System.Diagnostics.Process.Start(Environment.GetEnvironmentVariable("OLDPROFILE") + "\\appdata\\local\\microsoft\\teams\\update.exe", "--processStart Teams.exe");
         }
-
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -83,18 +112,25 @@ namespace Teams_2nd_instance
             launch_2nd();
         }
 
-        //For future use
+        //Bring application to active state when clicking notifyicon
         private void notifyIcon1_MouseClick(object sender, MouseEventArgs e)
         {
-            //Show();
+            if (WindowState == FormWindowState.Minimized)
+            {
+                WindowState = FormWindowState.Normal;
+
+                // Activate the form
+                Show();
+                Activate();
+            }
+            
         }
-        //Handle normal/minized window actions
+        //Handle normal/minimized window actions
         private void Form1_Resize_1(object sender, EventArgs e)
         {
             if (WindowState == FormWindowState.Minimized)
             {
                 notifyIcon1.Visible = true;
-                //notifyIcon1.ShowBalloonTip(500);
                 ShowInTaskbar = false;
             }
             if (WindowState == FormWindowState.Normal)
@@ -102,30 +138,59 @@ namespace Teams_2nd_instance
                 notifyIcon1.Visible = false;
                 ShowInTaskbar = true;
                 Activate();
-
             }
         }
 
-        //Bring application to active state when DC notifyicon
-        private void notifyIcon1_DoubleClick(object sender, EventArgs e)
+        public void MinimizeApp(string parameter)
         {
-            // Show the form when the user double clicks on the notify icon.
-
-            // Set the WindowState to normal if the form is minimized.
-            if (WindowState == FormWindowState.Minimized)
+            if (parameter == "-minimized")
             {
-                WindowState = FormWindowState.Normal;
-                
-                // Activate the form.
-                Show();
-                Activate();
+                //this.WindowState = FormWindowState.Normal;
+                this.WindowState = FormWindowState.Minimized;
+                notifyIcon1.Visible = true;
+                ShowInTaskbar = false;
+                notifyIcon1.BalloonTipTitle = "Teams Launcher";
+                notifyIcon1.BalloonTipText = "Teams Launcher is started and running in the background...";
+                notifyIcon1.ShowBalloonTip(500);
+                //Hide();
             }
+
         }
+ 
         //Clean the stuff when closing the app
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
             notifyIcon1.Visible = false;
             Dispose();
+        }
+        
+        public static void AddApplicationToStartup()
+        {
+            using (RegistryKey key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true))
+            {
+                key.SetValue("Teams Launcher", "\"" + Application.ExecutablePath + " -minimized" + "\"");
+            }
+        }
+
+        public static void RemoveApplicationFromStartup()
+        {
+            using (RegistryKey key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true))
+            {
+                key.DeleteValue("Teams Launcher", false);
+            }
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox1.Checked == true)
+            {
+                string exePath = Application.ExecutablePath;
+                AddApplicationToStartup();
+            }
+            else
+            {
+                RemoveApplicationFromStartup();
+            }
         }
     }
 
