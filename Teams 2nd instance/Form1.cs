@@ -168,7 +168,7 @@ namespace Teams_2nd_instance
         {
             using (RegistryKey key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true))
             {
-                key.SetValue("Teams Launcher", "\"" + Application.ExecutablePath + " -minimized" + "\"");
+                key.SetValue("Teams Launcher", "\"" + Application.ExecutablePath + "\"" + " - minimized");
             }
         }
 
