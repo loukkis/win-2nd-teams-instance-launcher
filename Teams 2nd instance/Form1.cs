@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,14 +21,24 @@ namespace Teams_2nd_instance
 
         public Form1(string parameter)
         {
+            var localappdata = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            var downloads = Path.Combine(localappdata, @"Microsoft\Teams\Downloads\");
+            // If directory does not exist, create it. 
+            if (!Directory.Exists(downloads))
+            {
+                Directory.CreateDirectory(downloads);
+            }
+
             //Initialize and create environment variables
             InitializeComponent();
             Environment.SetEnvironmentVariable("OLDPROFILE", Environment.GetEnvironmentVariable("USERPROFILE"));
             Environment.SetEnvironmentVariable("USERPROFILE", Environment.GetEnvironmentVariable("OLDPROFILE") + "\\appdata\\local\\microsoft\\teams\\");
 
-            
-                //InitializeComponent();
-                MinimizeApp(parameter);
+
+
+
+            //InitializeComponent();
+            MinimizeApp(parameter);
             
 
             this.components = new System.ComponentModel.Container();
