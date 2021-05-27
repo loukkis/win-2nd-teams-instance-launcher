@@ -63,9 +63,9 @@ namespace Teams_2nd_instance.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static System.Drawing.Icon free {
+        internal static System.Drawing.Icon t2 {
             get {
-                object obj = ResourceManager.GetObject("free", resourceCulture);
+                object obj = ResourceManager.GetObject("t2", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }
